@@ -1,15 +1,21 @@
 #!/usr/bin/env ruby
 
-player1 = { shape: :X }
-player2 = { shape: :O }
-current_player = player1
-winner = nil
+require './lib/helper.rb'
+# current_player = player1
+# winner = nil
 
-puts 'hello player 1 please enter your name'
-player1[:name] = gets.chomp
+print 'hello player 1 please enter your name'
+name = gets.chomp
+print "#{name} please pick your string no longer than 5 characters"
+shape = gets.chomp
+player1 = Player.new(name, shape)
 
-puts 'hello player 2 please enter your name'
-player2[:name] = gets.chomp
+print 'hello player 2 please enter your name'
+name = gets.chomp
+print "#{name} please pick your string no longer than 5 characters"
+shape.str_size(gets.chomp)
+player2 = Player.new(name, shape)
+
 
 board = []
 loop do
