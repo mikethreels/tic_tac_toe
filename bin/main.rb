@@ -20,17 +20,24 @@ board = Board.new(player1, player2)
 
 loop do
   # clear the board
-  Gem.win_platform? ? (system 'cls') : (system 'clear')
-  Helper.render_board board.board
+  # Gem.win_platform? ? (system 'cls') : (system 'clear')
+  Helper.render_board board
   print "Make your move #{board.current_player.name} (#{board.current_player.sym}): "
 
   loop do
-    move = Helper.read_move
+    move = Helper.read_move(board.size)
     if board.field_empty?(move - 1)
       board.update_field(move - 1)
       break
     end
     print 'This field is already populated. Please select another one: '
+  end
+  winner = board.check_winner
+  if winner.nil? # If it's nil then it's a tie
+    puts 'It\'s a tie'
+  elsif winner  # Otherwise
+    puts "Congrats #{winner.name}. You have won"
+    break
   end
   # Check if a player has already won and update with winner variable and break out of the loop
   # Check if the board is full and break out of the loop (TIE)
@@ -38,8 +45,4 @@ loop do
 end
 
 # Check the winner variable to determine which user has won
-if winner.nil? # If it's nil then it's a tie
-  puts 'It\'s a tie'
-else # Otherwise
-  puts "Congrats #{winner}. You have won"
-end
+
