@@ -4,45 +4,66 @@ require './lib/helper.rb'
 require './lib/player.rb'
 require './lib/board.rb'
 
-print 'Hello player 1 please enter your name: '
-name = gets.chomp
-print "#{name} please pick your string no longer than 5 characters: "
-shape = Helper.shape
-player1 = Player.new(name, shape)
+name = Helper.read_string(
+  'Hello player 1 please enter your name: ',
+  'Your name can\'t be empty. Please enter a name: '
+) { |str| !str.empty? }
 
-print 'Hello player 2 please enter your name: '
-name = gets.chomp
-print "#{name} please pick your string no longer than 5 characters: "
-shape = Helper.shape
-player2 = Player.new(name, shape)
+shape1 = Helper.read_string(
+  "#{name} please pick your shape no longer than 5 characters: ",
+  'Please enter a string no longer than 5 characters: '
+) { |str| !str.empty? && str.size < 6 }
 
-board = Board.new(player1, player2)
+player1 = Player.new(name, shape1)
 
+name = Helper.read_string(
+  'Hello player 2 please enter your name: ',
+  'Your name can\'t be empty. Please enter a name: '
+) { |str| !str.empty? }
+
+shape2 = Helper.read_string(
+  "#{name} please pick your shape no longer than 5 characters and different from player 1's shape: ",
+  'Please enter a string no longer than 5 characters and different from player 1\'s shape: '
+) { |str| !str.empty? && str.size < 6 && str != shape1 }
+
+player2 = Player.new(name, shape2)
+
+print 'Please enter the size of the board: '
+size = Helper.read_integer(10)
+
+board = Board.new(player1, player2, size)
+
+Helper.clear_console
 loop do
   # clear the board
-  # Gem.win_platform? ? (system 'cls') : (system 'clear')
-  Helper.render_board board
+  Helper.render_board(board.board, board.size)
   print "Make your move #{board.current_player.name} (#{board.current_player.sym}): "
 
   loop do
-    move = Helper.read_move(board.size)
+    move = Helper.read_integer(board.size * board.size)
     if board.field_empty?(move - 1)
       board.update_field(move - 1)
       break
     end
     print 'This field is already populated. Please select another one: '
   end
+  Helper.clear_console
+
   winner = board.check_winner
   if winner.nil? # If it's nil then it's a tie
     puts 'It\'s a tie'
-  elsif winner  # Otherwise
+  elsif winner # Otherwise
     puts "Congrats #{winner.name}. You have won"
-    break
   end
-  # Check if a player has already won and update with winner variable and break out of the loop
-  # Check if the board is full and break out of the loop (TIE)
+  if winner.nil? || winner
+    print "\n"
+    Helper.render_board(board.board, board.size)
+    print "Enter 'y' if you want to start a new game or any other key to exit: "
+    command = gets.chomp
+    break unless command.downcase == 'y'
+
+    board = Board.new(player1, player2, size)
+    next
+  end
   board.switch_player
 end
-
-# Check the winner variable to determine which user has won
-
