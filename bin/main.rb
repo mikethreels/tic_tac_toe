@@ -1,41 +1,36 @@
 #!/usr/bin/env ruby
+
 require './lib/helper.rb'
 require './lib/player.rb'
 require './lib/board.rb'
-# current_player = player1
-# winner = nil
 
-print 'hello player 1 please enter your name'
+print 'Hello player 1 please enter your name: '
 name = gets.chomp
-print "#{name} please pick your string no longer than 5 characters"
-shape = Helper::get_shape
-p player1 = Player.new(name, shape)
+print "#{name} please pick your string no longer than 5 characters: "
+shape = Helper.shape
+player1 = Player.new(name, shape)
 
-print 'hello player 2 please enter your name'
+print 'Hello player 2 please enter your name: '
 name = gets.chomp
-print "#{name} please pick your string no longer than 5 characters"
-shape = Helper::get_shape
-p player2 = Player.new(name, shape)
+print "#{name} please pick your string no longer than 5 characters: "
+shape = Helper.shape
+player2 = Player.new(name, shape)
 
 board = Board.new(player1, player2)
+
 loop do
-  puts "make your move #{board.current_player.name}"
+  # clear the board
+  Gem.win_platform? ? (system 'cls') : (system 'clear')
+  Helper.render_board board.board
+  print "Make your move #{board.current_player.name} (#{board.current_player.sym}): "
+
   loop do
-    move = gets.chomp
-    begin
-      index = Integer(move)
-      if index < 1 || index > 9
-        puts 'Please enter a number between 1 and 9'
-        next
-      elsif !board.field_empty?(index - 1)
-        puts 'This field is already populated. Please select another one'
-      else
-        board.update_field(index - 1)
-        break
-      end
-    rescue ArgumentError
-      puts 'Please enter a number between 1 and 9'
+    move = Helper.read_move
+    if board.field_empty?(move - 1)
+      board.update_field(move - 1)
+      break
     end
+    print 'This field is already populated. Please select another one: '
   end
   # Check if a player has already won and update with winner variable and break out of the loop
   # Check if the board is full and break out of the loop (TIE)

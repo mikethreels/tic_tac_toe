@@ -1,10 +1,11 @@
 class Board
   attr_reader :current_player
+  attr_reader :board
   def initialize(player1, player2)
-  @player1 = player1
-  @player2 = player2  
-  @board = Array.new(9, nil)
-  @current_player = player1
+    @player1 = player1
+    @player2 = player2
+    @board = Array.new(9, nil)
+    @current_player = player1
   end
 
   def switch_player
@@ -18,5 +19,4 @@ class Board
   def update_field(arg)
     @board[arg] = @current_player.sym
   end
-
 end
