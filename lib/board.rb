@@ -35,7 +35,7 @@ class Board
 
   def check_hori
     @size.times.each do |i|
-      return true if !@board[i].nil? && (0..(@size - 1)).all? { |x| @board[i * @size + x] == @board[i] }
+      return true if !@board[i * @size].nil? && (0..(@size - 1)).all? { |x| @board[i * @size + x] == @board[i * @size] }
     end
     false
   end

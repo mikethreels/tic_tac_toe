@@ -1,28 +1,21 @@
 module Helper
-  def self.shape
-    shape = gets.chomp
-    while shape.size > 5 || shape.empty?
-      print
-      shape = gets.chomp
-    end
-    shape
-  end
-
   def self.render_board(board, size)
+    layout = ""
     board.each_with_index do |field, index|
-      print '|' unless (index % size).zero?
+      layout << '|' unless (index % size).zero?
       if field.nil?
-        print((index + 1).to_s.center(12))
+        layout <<((index + 1).to_s.center(12))
       else
-        print field.center(12)
+        layout << field.center(12)
       end
 
       next unless ((index + 1) % size).zero?
 
-      print "\n"
-      print '-' * (12 * size + (size - 1)) unless index == (size * size - 1)
-      print "\n"
+      layout << "\n"
+      layout << '-' * (12 * size + (size - 1)) unless index == (size * size - 1)
+      layout << "\n" 
     end
+    layout
   end
 
   def self.read_integer(max)
