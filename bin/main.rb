@@ -7,13 +7,15 @@ require_relative '../lib/board.rb'
 print "Hi players,
 welcome to Tic-Tac-Toe, before you start the game let us explain the game-play a little.
 The game is played on a grid that's n squares by n squares.
-You are a symbol you choose, your friend is another symbol he/she chooses. Players take turns putting their symbols in empty squares.
+You are a symbol you choose, your friend is another symbol he/she chooses.
+Players take turns putting their symbols in empty squares.
 The first player to get n of his/her symbols in a row (horizontally, vertically, or diagonally) is the winner.
 When all squares are full, the game is over. If no player has n symbols in a row, the game ends in a tie.
 \n
 BEFORE YOU START:
 - please pick your name and symbol you would like to play with.
-- enter the size of the board you would like to use (you will enter the number of rows and the game automatically takes the same number of columns)
+- enter the size of the board you would like to use
+  (you will enter the number of rows and the game automatically takes the same number of columns)
 - play as explained above.\n\n"
 
 name = Helper.read_string(
@@ -72,6 +74,7 @@ loop do
     print "Enter 'y' if you want to start a new game or any other key to exit: "
     command = gets.chomp
     break unless command.downcase == 'y'
+
     Helper.clear_console
     board = Board.new(player1, player2, size)
     next
