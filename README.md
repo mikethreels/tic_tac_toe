@@ -8,8 +8,7 @@ Tic-Tac-Toe game implemented in Ruby.
 
 - Clone the repository.
 - Open a terminal on the containing folder of this project
-- bundle install
-- ruby bin/main.rb
+- run `./bin/main.rb`
 
 ## Authors
 
