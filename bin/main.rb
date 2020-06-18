@@ -18,24 +18,48 @@ BEFORE YOU START:
   (you will enter the number of rows and the game automatically takes the same number of columns)
 - play as explained above.\n\n"
 
-name = Helper.read_string(
+def read_integer(max)
+  loop do
+    move = gets.chomp
+    begin
+      move = Integer(move)
+      return move if move.positive? && move <= max
+
+      print "Please enter a number between 1 and #{max}: "
+    rescue ArgumentError
+      print "Please enter a number between 1 and #{max}: "
+    end
+  end
+end
+
+def read_string(message, error_message)
+  print message
+  string = gets.chomp.strip
+  until yield string
+    print error_message
+    string = gets.chomp.strip
+  end
+  string
+end
+
+name = read_string(
   'Hello player 1 please enter your name: ',
   'Your name can\'t be empty. Please enter a name: '
 ) { |str| !str.empty? }
 
-shape1 = Helper.read_string(
+shape1 = read_string(
   "#{name} please pick your symbol no longer than 5 characters: ",
   'Please enter a string no longer than 5 characters: '
 ) { |str| !str.empty? && str.size < 6 }
 
 player1 = Player.new(name, shape1)
 
-name = Helper.read_string(
+name = read_string(
   'Hello player 2 please enter your name: ',
   'Your name can\'t be empty. Please enter a name: '
 ) { |str| !str.empty? }
 
-shape2 = Helper.read_string(
+shape2 = read_string(
   "#{name} please pick your symbol no longer than 5 characters and different from player 1's symbol: ",
   'Please enter a string no longer than 5 characters and different from player 1\'s symbol: '
 ) { |str| !str.empty? && str.size < 6 && str != shape1 }
@@ -43,7 +67,7 @@ shape2 = Helper.read_string(
 player2 = Player.new(name, shape2)
 
 print 'Please enter the size of the board: '
-size = Helper.read_integer(10)
+size = read_integer(10)
 
 board = Board.new(player1, player2, size)
 
@@ -53,7 +77,7 @@ loop do
   print "Make your move #{board.current_player.name} (#{board.current_player.sym}): "
 
   loop do
-    move = Helper.read_integer(board.size * board.size)
+    move = read_integer(board.size * board.size)
     if board.field_empty?(move - 1)
       board.update_field(move - 1)
       break

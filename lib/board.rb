@@ -1,7 +1,5 @@
 class Board
-  attr_reader :current_player
-  attr_reader :board
-  attr_reader :size
+  attr_reader :current_player, :board, :size
   def initialize(player1, player2, size = 3)
     @player1 = player1
     @player2 = player2

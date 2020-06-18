@@ -18,31 +18,7 @@ module Helper
     layout
   end
 
-  def self.read_integer(max)
-    loop do
-      move = gets.chomp.strip
-      begin
-        move = Integer(move)
-        return move if move.positive? && move <= max
-
-        print "Please enter a number between 1 and #{max}: "
-      rescue ArgumentError
-        print "Please enter a number between 1 and #{max}: "
-      end
-    end
-  end
-
   def self.clear_console
     Gem.win_platform? ? (system 'cls') : (system 'clear')
-  end
-
-  def self.read_string(message, error_message)
-    print message
-    string = gets.chomp.strip
-    until yield string
-      print error_message
-      string = gets.chomp.strip
-    end
-    string
   end
 end
