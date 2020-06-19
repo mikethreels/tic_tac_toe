@@ -1,44 +1,107 @@
 #!/usr/bin/env ruby
 
-player1 = { shape: :X }
-player2 = { shape: :O }
-current_player = player1
-winner = nil
+require_relative '../lib/helper.rb'
+require_relative '../lib/player.rb'
+require_relative '../lib/board.rb'
 
-puts 'hello player 1 please enter your name'
-player1[:name] = gets.chomp
+print "Hi players,
+welcome to Tic-Tac-Toe, before you start the game let us explain the game-play a little.
+The game is played on a grid that's n squares by n squares.
+You are a symbol you choose, your friend is another symbol he/she chooses.
+Players take turns putting their symbols in empty squares.
+The first player to get n of his/her symbols in a row (horizontally, vertically, or diagonally) is the winner.
+When all squares are full, the game is over. If no player has n symbols in a row, the game ends in a tie.
+\n
+BEFORE YOU START:
+- please pick your name and symbol you would like to play with.
+- enter the size of the board you would like to use
+  (you will enter the number of rows and the game automatically takes the same number of columns)
+- play as explained above.\n\n"
 
-puts 'hello player 2 please enter your name'
-player2[:name] = gets.chomp
-
-board = []
-loop do
-  puts "make your move #{current_player[:name]}"
+def read_integer(max)
   loop do
     move = gets.chomp
     begin
-      index = Integer(move)
-      if index < 1 || index > 9
-        puts 'Please enter a number between 1 and 9'
-        next
-      elsif board[index - 1] != ''
-        puts 'This field is already populated. Please select another one'
-      else
-        puts "Update the board field with the index #{index - 1} with the shape for the current player"
-        break
-      end
+      move = Integer(move)
+      return move if move.positive? && move <= max
+
+      print "Please enter a number between 1 and #{max}: "
     rescue ArgumentError
-      puts 'Please enter a number between 1 and 9'
+      print "Please enter a number between 1 and #{max}: "
     end
   end
-  # Check if a player has already won and update with winner variable and break out of the loop
-  # Check if the board is full and break out of the loop (TIE)
-  current_player = current_player[:shape] == player1[:shape] ? player2 : player1
 end
 
-# Check the winner variable to determine which user has won
-if winner.nil? # If it's nil then it's a tie
-  puts 'It\'s a tie'
-else # Otherwise
-  puts "Congrats #{winner}. You have won"
+def read_string(message, error_message)
+  print message
+  string = gets.chomp.strip
+  until yield string
+    print error_message
+    string = gets.chomp.strip
+  end
+  string
+end
+
+name = read_string(
+  'Hello player 1 please enter your name: ',
+  'Your name can\'t be empty. Please enter a name: '
+) { |str| !str.empty? }
+
+shape1 = read_string(
+  "#{name} please pick your symbol no longer than 5 characters: ",
+  'Please enter a string no longer than 5 characters: '
+) { |str| !str.empty? && str.size < 6 }
+
+player1 = Player.new(name, shape1)
+
+name = read_string(
+  'Hello player 2 please enter your name: ',
+  'Your name can\'t be empty. Please enter a name: '
+) { |str| !str.empty? }
+
+shape2 = read_string(
+  "#{name} please pick your symbol no longer than 5 characters and different from player 1's symbol: ",
+  'Please enter a string no longer than 5 characters and different from player 1\'s symbol: '
+) { |str| !str.empty? && str.size < 6 && str != shape1 }
+
+player2 = Player.new(name, shape2)
+
+print 'Please enter the size of the board: '
+size = read_integer(10)
+
+board = Board.new(player1, player2, size)
+
+Helper.clear_console
+loop do
+  puts Helper.render_board(board.board, board.size)
+  print "Make your move #{board.current_player.name} (#{board.current_player.sym}): "
+
+  loop do
+    move = read_integer(board.size * board.size)
+    if board.field_empty?(move - 1)
+      board.update_field(move - 1)
+      break
+    end
+    print 'This field is already populated. Please select another one: '
+  end
+  Helper.clear_console
+
+  winner = board.check_winner
+  if winner.nil? # If it's nil then it's a tie
+    puts 'It\'s a tie'
+  elsif winner # Otherwise
+    puts "Congrats #{winner.name}. You have won"
+  end
+  if winner.nil? || winner
+    print "\n"
+    puts Helper.render_board(board.board, board.size)
+    print "Enter 'y' if you want to start a new game or any other key to exit: "
+    command = gets.chomp
+    break unless command.downcase == 'y'
+
+    Helper.clear_console
+    board = Board.new(player1, player2, size)
+    next
+  end
+  board.switch_player
 end
